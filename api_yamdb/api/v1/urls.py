@@ -11,5 +11,4 @@ router.register('titles', TitleViewSet, basename='title')
 
 urlpatterns = [
     path('', include(router.urls)),
-    
 ]
