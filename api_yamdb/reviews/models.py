@@ -37,7 +37,7 @@ class Title(models.Model):
                                    through='GenreTitle',
                                    )
     category = models.ForeignKey(Category,
-                                 on_delete=models.SET_NULL,
+                                 on_delete=models.DO_NOTHING,
                                  related_name='category',
                                  verbose_name='Категория тайтла',
                                  )
@@ -49,8 +49,8 @@ class Title(models.Model):
 
 class GenreTitle(models.Model):
     """Связь жанра и тайтла."""
-    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
-    title = models.ForeignKey(Title, on_delete=models.CASCADE)
+    genre = models.ForeignKey(Genre, on_delete=models.DO_NOTHING)
+    title = models.ForeignKey(Title, on_delete=models.DO_NOTHING)
 
     def __str__(self):
         return f'{self.title} {self.genre}'
