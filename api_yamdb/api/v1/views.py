@@ -1,8 +1,17 @@
+from rest_framework.viewsets import ModelViewSet
 from api.v1.serializers import (CategorySerializer, GenreSerializer,
                                 TitleSerializer)
 from rest_framework import filters, mixins, viewsets
 from rest_framework.pagination import LimitOffsetPagination
 from reviews.models import Category, Genre, Title
+
+from user.models import User
+from api.v1.serializers import UserSerializer
+
+
+class UserViewSet(ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
 
 class CreateListRetrieveViewSet(mixins.CreateModelMixin,

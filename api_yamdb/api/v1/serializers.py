@@ -1,8 +1,17 @@
 import re
 
-from django.utils import timezone
 from rest_framework import serializers
+from django.utils import timezone
 from reviews.models import Category, Genre, Title
+from user.models import User
+
+
+class UserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        fields = ('id', 'username', 'email', 'first_name', 'last_name',
+                  'bio', 'role')
+        model = User
 
 
 class CategorySerializer(serializers.ModelSerializer):
