@@ -1,12 +1,15 @@
-from rest_framework.viewsets import ModelViewSet
+from api.v1.filters import TitleFilter
+from api.v1.permissions import IsAdminOrReadOnly
 from api.v1.serializers import (CategorySerializer, GenreSerializer,
-                                TitleSerializer)
-from rest_framework import filters, mixins, viewsets
+                                TitleReadSerializer, TitleWriteSerializer,
+                                UserSerializer)
+from django.db.models import Avg
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, mixins, permissions, viewsets
 from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.viewsets import ModelViewSet
 from reviews.models import Category, Genre, Title
-
 from user.models import User
-from api.v1.serializers import UserSerializer
 
 
 class UserViewSet(ModelViewSet):
@@ -14,36 +17,43 @@ class UserViewSet(ModelViewSet):
     serializer_class = UserSerializer
 
 
-class CreateListRetrieveViewSet(mixins.CreateModelMixin,
-                                mixins.ListModelMixin,
-                                mixins.RetrieveModelMixin,
-                                viewsets.GenericViewSet):
+class CreateListDestroyViewSet(mixins.CreateModelMixin,
+                               mixins.ListModelMixin,
+                               mixins.DestroyModelMixin,
+                               viewsets.GenericViewSet):
     """Дженерик для операций retrieve/create/list."""
-    pass
+    lookup_field = 'slug'
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+    pagination_class = LimitOffsetPagination
 
 
-class CategoryViewSet(CreateListRetrieveViewSet):
+class CategoryViewSet(CreateListDestroyViewSet):
     """Вьюсет для модели Category."""
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    pagination_class = LimitOffsetPagination
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('name',)
+    permission_classes = (IsAdminOrReadOnly,)
 
 
-class GenreViewSet(CreateListRetrieveViewSet):
+class GenreViewSet(CreateListDestroyViewSet):
     """Вьюсет для модели Genre."""
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    pagination_class = LimitOffsetPagination
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('name',)
+    permission_classes = (IsAdminOrReadOnly,)
 
 
 class TitleViewSet(viewsets.ModelViewSet):
     """Вьюсет для модели Title."""
-    queryset = Title.objects.all()
-    serializer_class = TitleSerializer
+    queryset = Title.objects.annotate(
+        rating=Avg('reviews__score')
+    ).order_by('name')
+    # serializer_class = TitleSerializer
     pagination_class = LimitOffsetPagination
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('name', 'year', 'category', 'genre')
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = TitleFilter
+    permission_classes = (IsAdminOrReadOnly,)
+
+    def get_serializer_class(self):
+        if self.request.method in permissions.SAFE_METHODS:
+            return TitleReadSerializer
+        return TitleWriteSerializer
