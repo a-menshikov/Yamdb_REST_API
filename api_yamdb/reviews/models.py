@@ -45,7 +45,8 @@ class Title(models.Model):
     year = models.PositiveIntegerField()
     description = models.TextField(verbose_name='Описание тайтла',
                                    null=True,
-                                   blank=True)
+                                   blank=True,
+                                   )
     genre = models.ManyToManyField(Genre,
                                    through='GenreTitle',
                                    )
@@ -53,6 +54,8 @@ class Title(models.Model):
                                  on_delete=models.DO_NOTHING,
                                  related_name='category',
                                  verbose_name='Категория тайтла',
+                                 null=True,
+                                 blank=True,
                                  )
 
     class Meta:
