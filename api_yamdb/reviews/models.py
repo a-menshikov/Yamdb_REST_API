@@ -10,6 +10,11 @@ class Category(models.Model):
                             unique=True,
                             verbose_name='Псевдоним категории')
 
+    class Meta:
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
+        default_related_name = 'categories'
+
     def __str__(self):
         """Возвращает слаг категории."""
         return f'{self.slug}'
@@ -23,6 +28,11 @@ class Genre(models.Model):
                             unique=True,
                             verbose_name='Псевдоним жанра')
 
+    class Meta:
+        verbose_name = 'Жанр'
+        verbose_name_plural = 'Жанры'
+        default_related_name = 'genres'
+
     def __str__(self):
         """Возвращает слаг жанра."""
         return f'{self.slug}'
@@ -33,7 +43,9 @@ class Title(models.Model):
     name = models.CharField(max_length=256,
                             verbose_name='Название тайтла')
     year = models.PositiveIntegerField()
-    description = models.TextField(verbose_name='Описание тайтла')
+    description = models.TextField(verbose_name='Описание тайтла',
+                                   null=True,
+                                   blank=True)
     genre = models.ManyToManyField(Genre,
                                    through='GenreTitle',
                                    )
@@ -42,6 +54,11 @@ class Title(models.Model):
                                  related_name='category',
                                  verbose_name='Категория тайтла',
                                  )
+
+    class Meta:
+        verbose_name = 'Произведение'
+        verbose_name_plural = 'Произведения'
+        default_related_name = 'titles'
 
     def __str__(self):
         """Возвращает название тайтла."""
