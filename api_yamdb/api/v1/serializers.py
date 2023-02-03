@@ -2,15 +2,25 @@ import re
 
 from rest_framework import serializers
 from django.utils import timezone
+
 from reviews.models import Category, Genre, Title
 from user.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
+    """Сериализатор модели User."""
 
     class Meta:
-        fields = ('id', 'username', 'email', 'first_name', 'last_name',
+        fields = ('username', 'email', 'first_name', 'last_name',
                   'bio', 'role')
+        model = User
+
+
+class SignupSerializer(serializers.ModelSerializer):
+    """Сериализатор для регистрации пользователей."""
+
+    class Meta:
+        fields = ('username', 'email')
         model = User
 
 

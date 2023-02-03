@@ -1,17 +1,32 @@
 from rest_framework.viewsets import ModelViewSet
-from api.v1.serializers import (CategorySerializer, GenreSerializer,
-                                TitleSerializer)
 from rest_framework import filters, mixins, viewsets
+from rest_framework.permissions import AllowAny
 from rest_framework.pagination import LimitOffsetPagination
-from reviews.models import Category, Genre, Title
 
+from api.v1.serializers import (CategorySerializer, GenreSerializer,
+                                TitleSerializer, UserSerializer,
+                                SignupSerializer)
+from reviews.models import Category, Genre, Title
 from user.models import User
-from api.v1.serializers import UserSerializer
 
 
 class UserViewSet(ModelViewSet):
+    """Вьюсет для модели User."""
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    lookup_field = 'username'
+    http_method_names = ['get', 'post', 'patch', 'delete']
+    pagination_class = LimitOffsetPagination
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('username',)
+
+
+class SignupViewSet(viewsets.GenericViewSet,
+                    mixins.CreateModelMixin):
+    """Вьюсет для регистрации пользователей."""
+    queryset = User.objects.all()
+    serializer_class = SignupSerializer
+    permission_classes = (AllowAny,)
 
 
 class CreateListRetrieveViewSet(mixins.CreateModelMixin,
