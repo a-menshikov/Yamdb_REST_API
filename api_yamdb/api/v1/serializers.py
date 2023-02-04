@@ -1,16 +1,23 @@
 import re
 
-from rest_framework import serializers
 from django.utils import timezone
-from reviews.models import Category, Genre, Title
+from rest_framework import serializers
+
+from reviews.models import Category, Comment, Genre, Review, Title
 from user.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
-
     class Meta:
-        fields = ('id', 'username', 'email', 'first_name', 'last_name',
-                  'bio', 'role')
+        fields = (
+            'id',
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+            'bio',
+            'role',
+        )
         model = User
 
 
@@ -54,10 +61,50 @@ class TitleSerializer(serializers.ModelSerializer):
         current_year = timezone.now().year
         if value > current_year:
             raise serializers.ValidationError(
-                'Марти, ты опять взял Делориан без спроса?!'
+                'Марти, ты опять взял Делориан без спроса?!',
             )
         return value
 
     class Meta:
         fields = ('id', 'name', 'year', 'description', 'genre', 'category')
         model = Title
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    """Сериализатор для модели Review."""
+
+    author = serializers.StringRelatedField(read_only=True)
+
+    class Meta:
+        model = Review
+        fields = ('id', 'text', 'author', 'score', 'pub_date')
+
+    def validate(self, data):
+        """Запрещает пользователям оставлять повторные отзывы."""
+        if not self.context.get('request').method == 'POST':
+            return data
+        author = self.context.get('request').user
+        title_id = self.context.get('view').kwargs.get('title_id')
+        if Review.objects.filter(author=author, title=title_id).exists():
+            raise serializers.ValidationError(
+                'Вы уже оставляли отзыв на это произведение'
+            )
+        """Проверка, что оценка в диапазоне от 1 до 10."""
+        if not 1 <= data['score'] <= 10:
+            raise serializers.ValidationError('Оценка может быть от 1 до 10!')
+        return data
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(
+        read_only=True, slug_field='username'
+    )
+
+    class Meta:
+        fields = (
+            'id',
+            'text',
+            'author',
+            'pub_date',
+        )
+        model = Comment
