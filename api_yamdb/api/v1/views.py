@@ -1,18 +1,17 @@
-from rest_framework.viewsets import ModelViewSet
-from rest_framework import filters, mixins, viewsets, status
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework_simplejwt.views import TokenObtainPairView
-from django.db.models import Avg
-from django_filters.rest_framework import DjangoFilterBackend
-
 from api.v1.filters import TitleFilter
 from api.v1.permissions import IsAdminOrReadOnly
 from api.v1.serializers import (CategorySerializer, GenreSerializer,
-                                TitleReadSerializer, TitleWriteSerializer, UserSerializer,
-                                SignupSerializer, YamdbTokenObtainPairSerializer)
-
+                                SignupSerializer, TitleReadSerializer,
+                                TitleWriteSerializer, UserSerializer,
+                                YamdbTokenObtainPairSerializer)
+from django.db.models import Avg
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, mixins, status, viewsets
+from rest_framework.permissions import SAFE_METHODS, AllowAny, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
+from rest_framework_simplejwt.views import TokenObtainPairView
 from reviews.models import Category, Genre, Title
 from user.models import User
 
@@ -78,6 +77,6 @@ class TitleViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdminOrReadOnly,)
 
     def get_serializer_class(self):
-        if self.request.method in permissions.SAFE_METHODS:
+        if self.request.method in SAFE_METHODS:
             return TitleReadSerializer
         return TitleWriteSerializer
