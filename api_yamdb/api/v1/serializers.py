@@ -28,6 +28,7 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         fields = ('name', 'slug')
         model = Category
+        lookup_field = 'slug'
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -44,10 +45,12 @@ class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ('name', 'slug')
         model = Genre
+        lookup_field = 'slug'
 
 
 class TitleSerializer(serializers.ModelSerializer):
-    """Сериализатор модели Title."""
+    """Базовый сериализатор модели Title."""
+    rating = serializers.IntegerField(read_only=True)
 
     def validate_year(self, value):
         """Проверка года на будущее время."""
@@ -59,5 +62,25 @@ class TitleSerializer(serializers.ModelSerializer):
         return value
 
     class Meta:
-        fields = ('id', 'name', 'year', 'description', 'genre', 'category')
         model = Title
+        fields = ('id', 'name', 'year', 'description', 'genre', 'category')
+
+
+class TitleReadSerializer(TitleSerializer):
+    """Сериализатор модели Title для чтения."""
+    genre = GenreSerializer(read_only=True, many=True)
+    category = CategorySerializer(read_only=True)
+
+
+class TitleWriteSerializer(TitleSerializer):
+    """Сериализатор модели Title для записи."""
+    category = serializers.SlugRelatedField(
+        slug_field='slug',
+        queryset=Category.objects.all(),
+        required=False
+    )
+    genre = serializers.SlugRelatedField(
+        slug_field='slug',
+        queryset=Genre.objects.all(),
+        many=True
+    )
