@@ -1,4 +1,5 @@
 from rest_framework import permissions
+from user.models import ADMIN
 
 
 class IsAdminOrReadOnly(permissions.BasePermission):
@@ -14,7 +15,7 @@ class IsAdminOrReadOnly(permissions.BasePermission):
             or (
                 request.user.is_authenticated
                 and (
-                    request.user.role == 'ADM'
+                    request.user.role == ADMIN
                     or request.user.is_staff
                     or request.user.is_superuser
                 )
