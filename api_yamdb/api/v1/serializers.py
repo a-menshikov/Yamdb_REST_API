@@ -50,7 +50,7 @@ class GenreSerializer(serializers.ModelSerializer):
 
 class TitleSerializer(serializers.ModelSerializer):
     """Базовый сериализатор модели Title."""
-    rating = serializers.FloatField(read_only=True)
+    rating = serializers.IntegerField(read_only=True)
 
     def validate_year(self, value):
         """Проверка года на будущее время."""
