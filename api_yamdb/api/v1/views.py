@@ -1,7 +1,9 @@
 from rest_framework.viewsets import ModelViewSet
-from rest_framework import filters, mixins, viewsets
+from rest_framework import filters, mixins, viewsets, status
 from rest_framework.permissions import AllowAny
 from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
 from api.v1.serializers import (CategorySerializer, GenreSerializer,
                                 TitleSerializer, UserSerializer,
@@ -15,18 +17,22 @@ class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     lookup_field = 'username'
-    http_method_names = ['get', 'post', 'patch', 'delete']
+    http_method_names = ('get', 'post', 'patch', 'delete')
     pagination_class = LimitOffsetPagination
     filter_backends = (filters.SearchFilter,)
     search_fields = ('username',)
 
 
-class SignupViewSet(viewsets.GenericViewSet,
-                    mixins.CreateModelMixin):
-    """Вьюсет для регистрации пользователей."""
-    queryset = User.objects.all()
-    serializer_class = SignupSerializer
+class SignupView(APIView):
+    """Вьюкласс для регистрации пользователей."""
     permission_classes = (AllowAny,)
+
+    def post(self, request):
+        serializer = SignupSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CreateListRetrieveViewSet(mixins.CreateModelMixin,

@@ -18,6 +18,14 @@ class UserSerializer(serializers.ModelSerializer):
 
 class SignupSerializer(serializers.ModelSerializer):
     """Сериализатор для регистрации пользователей."""
+    email = serializers.EmailField(required=True, max_length=254)
+
+    def validate_username(self, value):
+        if value == 'me':
+            raise serializers.ValidationError(
+                'me нельзя использовать в качестве имени'
+            )
+        return value
 
     class Meta:
         fields = ('username', 'email')
