@@ -3,18 +3,23 @@ from django.db import models
 
 ADMIN = 'admin'
 
+ADMIN = 'admin'
+MODERATOR = 'moderator'
+USER = 'user'
+ROLES = [
+    (ADMIN, ADMIN),
+    (MODERATOR, MODERATOR),
+    (USER, USER),
+]
+
+
 class User(AbstractUser):
-    ROLES = [
-        ('ADM', 'admin'),
-        ('MDR', 'moderator'),
-        ('USR', 'user'),
-    ]
     bio = models.TextField(
         'Биография',
         blank=True,
     )
     role = models.CharField(
-        max_length=3,
+        max_length=9,
         choices=ROLES,
-        default='USR',
+        default='user',
     )

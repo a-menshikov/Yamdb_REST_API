@@ -2,15 +2,45 @@ import re
 
 from rest_framework import serializers
 from django.utils import timezone
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.shortcuts import get_object_or_404
+
 from reviews.models import Category, Genre, Title
 from user.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
+    """Сериализатор модели User."""
 
     class Meta:
-        fields = ('id', 'username', 'email', 'first_name', 'last_name',
+        fields = ('username', 'email', 'first_name', 'last_name',
                   'bio', 'role')
+        model = User
+
+
+class YamdbTokenObtainPairSerializer(TokenObtainPairSerializer):
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        return {'access': data['access']}
+
+    def validate_username(self, value):
+        return get_object_or_404(User, username=value)
+
+
+class SignupSerializer(serializers.ModelSerializer):
+    """Сериализатор для регистрации пользователей."""
+    email = serializers.EmailField(required=True, max_length=254)
+
+    def validate_username(self, value):
+        if value == 'me':
+            raise serializers.ValidationError(
+                'me нельзя использовать в качестве имени'
+            )
+        return value
+
+    class Meta:
+        fields = ('username', 'email')
         model = User
 
 

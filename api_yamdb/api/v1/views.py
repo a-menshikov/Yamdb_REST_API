@@ -1,19 +1,47 @@
+from rest_framework.viewsets import ModelViewSet
+from rest_framework import filters, mixins, viewsets, status
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework_simplejwt.views import TokenObtainPairView
+from django.db.models import Avg
+from django_filters.rest_framework import DjangoFilterBackend
+
 from api.v1.filters import TitleFilter
 from api.v1.permissions import IsAdminOrReadOnly
 from api.v1.serializers import (CategorySerializer, GenreSerializer,
-                                TitleReadSerializer, TitleWriteSerializer,
-                                UserSerializer)
-from django.db.models import Avg
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, mixins, permissions, viewsets
-from rest_framework.viewsets import ModelViewSet
+                                TitleReadSerializer, TitleWriteSerializer, UserSerializer,
+                                SignupSerializer, YamdbTokenObtainPairSerializer)
+
 from reviews.models import Category, Genre, Title
 from user.models import User
 
 
 class UserViewSet(ModelViewSet):
+    """Вьюсет для модели User."""
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    lookup_field = 'username'
+    http_method_names = ('get', 'post', 'patch', 'delete')
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('username',)
+    permission_classes = (IsAuthenticated,)
+
+
+class YamdbTokenObtainPairView(TokenObtainPairView):
+    serializer_class = YamdbTokenObtainPairSerializer
+
+
+class SignupView(APIView):
+    """Вьюкласс для регистрации пользователей."""
+    permission_classes = (AllowAny,)
+
+    def post(self, request):
+        serializer = SignupSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CreateListDestroyViewSet(mixins.CreateModelMixin,
