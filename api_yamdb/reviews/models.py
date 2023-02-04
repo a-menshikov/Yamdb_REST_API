@@ -14,7 +14,6 @@ class Category(models.Model):
     class Meta:
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
-        default_related_name = 'categories'
 
     def __str__(self):
         """Возвращает слаг категории."""
@@ -32,7 +31,6 @@ class Genre(models.Model):
     class Meta:
         verbose_name = 'Жанр'
         verbose_name_plural = 'Жанры'
-        default_related_name = 'genres'
 
     def __str__(self):
         """Возвращает слаг жанра."""
@@ -42,7 +40,8 @@ class Genre(models.Model):
 class Title(models.Model):
     """Модель тайтла."""
     name = models.CharField(max_length=256,
-                            verbose_name='Название тайтла')
+                            verbose_name='Название тайтла'
+                            )
     year = models.PositiveIntegerField(null=True,
                                        verbose_name='Год выпуска',
                                        )
@@ -72,8 +71,15 @@ class Title(models.Model):
 
 class GenreTitle(models.Model):
     """Связь жанра и тайтла."""
-    genre = models.ForeignKey(Genre, on_delete=models.SET_NULL, null=True)
-    title = models.ForeignKey(Title, on_delete=models.CASCADE)
+    genre = models.ForeignKey(Genre,
+                              on_delete=models.SET_NULL,
+                              null=True,
+                              verbose_name='Жанр',
+                              )
+    title = models.ForeignKey(Title,
+                              on_delete=models.CASCADE,
+                              verbose_name='Тайтл',
+                              )
 
     def __str__(self):
         return f'{self.title} {self.genre}'
