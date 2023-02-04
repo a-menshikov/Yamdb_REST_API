@@ -2,6 +2,8 @@ import re
 
 from rest_framework import serializers
 from django.utils import timezone
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.shortcuts import get_object_or_404
 
 from reviews.models import Category, Genre, Title
 from user.models import User
@@ -14,6 +16,16 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('username', 'email', 'first_name', 'last_name',
                   'bio', 'role')
         model = User
+
+
+class YamdbTokenObtainPairSerializer(TokenObtainPairSerializer):
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        return {'access': data['access']}
+
+    def validate_username(self, value):
+        return get_object_or_404(User, username=value)
 
 
 class SignupSerializer(serializers.ModelSerializer):

@@ -1,7 +1,15 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from user.constants import ROLES
+
+ADMIN = 'admin'
+MODERATOR = 'moderator'
+USER = 'user'
+ROLES = [
+    (ADMIN, ADMIN),
+    (MODERATOR, MODERATOR),
+    (USER, USER),
+]
 
 
 class User(AbstractUser):

@@ -1,13 +1,14 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import filters, mixins, viewsets, status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from api.v1.serializers import (CategorySerializer, GenreSerializer,
                                 TitleSerializer, UserSerializer,
-                                SignupSerializer)
+                                SignupSerializer, YamdbTokenObtainPairSerializer)
 from reviews.models import Category, Genre, Title
 from user.models import User
 
@@ -21,6 +22,11 @@ class UserViewSet(ModelViewSet):
     pagination_class = LimitOffsetPagination
     filter_backends = (filters.SearchFilter,)
     search_fields = ('username',)
+    permission_classes = (IsAuthenticated,)
+
+
+class YamdbTokenObtainPairView(TokenObtainPairView):
+    serializer_class = YamdbTokenObtainPairSerializer
 
 
 class SignupView(APIView):
