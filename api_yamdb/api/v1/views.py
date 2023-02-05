@@ -1,8 +1,9 @@
 from api.v1.filters import TitleFilter
-from api.v1.permissions import IsAdminOrReadOnly
+from api.v1.permissions import IsAdminOrReadOnly, IsAdminUser
 from api.v1.serializers import (CategorySerializer, GenreSerializer,
                                 SignupSerializer, TitleReadSerializer,
                                 TitleWriteSerializer, UserSerializer,
+                                UsersMeSerializer,
                                 YamdbTokenObtainPairSerializer)
 from django.db.models import Avg
 from django_filters.rest_framework import DjangoFilterBackend
@@ -14,6 +15,8 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.views import TokenObtainPairView
 from reviews.models import Category, Genre, Title
 from user.models import User
+from django.core.mail import send_mail
+from django.shortcuts import get_object_or_404
 
 
 class UserViewSet(ModelViewSet):
@@ -24,7 +27,25 @@ class UserViewSet(ModelViewSet):
     http_method_names = ('get', 'post', 'patch', 'delete')
     filter_backends = (filters.SearchFilter,)
     search_fields = ('username',)
+    permission_classes = (IsAuthenticated, IsAdminUser)
+
+
+class UsersMeView(APIView):
+    """Вью для эндпоинта users/me/."""
     permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        me = get_object_or_404(User, username=request.user.username)
+        serializer = UserSerializer(me)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def patch(self, request):
+        me = get_object_or_404(User, username=request.user.username)
+        serializer = UsersMeSerializer(me, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
 
 class YamdbTokenObtainPairView(TokenObtainPairView):
@@ -32,12 +53,18 @@ class YamdbTokenObtainPairView(TokenObtainPairView):
 
 
 class SignupView(APIView):
-    """Вьюкласс для регистрации пользователей."""
+    """Вью для регистрации пользователей."""
     permission_classes = (AllowAny,)
 
     def post(self, request):
         serializer = SignupSerializer(data=request.data)
         if serializer.is_valid():
+            send_mail(
+                'данные для получеия токена',
+                'текст письма',
+                'token@yamdb.ru',
+                [request.data.get('email')],
+            )
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -2,8 +2,6 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 ADMIN = 'admin'
-
-ADMIN = 'admin'
 MODERATOR = 'moderator'
 USER = 'user'
 ROLES = [
@@ -22,4 +20,12 @@ class User(AbstractUser):
         max_length=9,
         choices=ROLES,
         default='user',
+    )
+    email = models.EmailField(
+        max_length=254,
+        unique=True,
+    )
+    confirmation_code = models.CharField(
+        max_length=10,
+        blank=True,
     )
