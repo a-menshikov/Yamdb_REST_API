@@ -5,6 +5,7 @@ from django.utils import timezone
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.shortcuts import get_object_or_404
 
+
 from reviews.models import Category, Genre, Title
 from user.models import User
 
@@ -18,7 +19,17 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
 
 
+class UsersMeSerializer(serializers.ModelSerializer):
+    """Сериализатор для эндпоинта users/me/."""
+
+    class Meta:
+        fields = ('username', 'email', 'first_name', 'last_name',
+                  'bio')
+        model = User
+
+
 class YamdbTokenObtainPairSerializer(TokenObtainPairSerializer):
+    confirmation_code = serializers.CharField(required=True)
 
     def validate(self, attrs):
         data = super().validate(attrs)
@@ -30,7 +41,6 @@ class YamdbTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 class SignupSerializer(serializers.ModelSerializer):
     """Сериализатор для регистрации пользователей."""
-    email = serializers.EmailField(required=True, max_length=254)
 
     def validate_username(self, value):
         if value == 'me':
