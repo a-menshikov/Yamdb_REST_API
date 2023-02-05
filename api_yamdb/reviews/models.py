@@ -1,9 +1,11 @@
 from django.db import models
+
 from user.models import User
 
 
 class Category(models.Model):
     """Модель категории."""
+
     name = models.CharField(max_length=256,
                             unique=True,
                             verbose_name='Название категории')
@@ -22,11 +24,11 @@ class Category(models.Model):
 
 class Genre(models.Model):
     """Модель жанра."""
-    name = models.CharField(max_length=256,
-                            verbose_name='Название жанра')
-    slug = models.SlugField(max_length=50,
-                            unique=True,
-                            verbose_name='Псевдоним жанра')
+
+    name = models.CharField(max_length=256, verbose_name='Название жанра')
+    slug = models.SlugField(
+        max_length=50, unique=True, verbose_name='Псевдоним жанра'
+    )
 
     class Meta:
         verbose_name = 'Жанр'
@@ -39,6 +41,7 @@ class Genre(models.Model):
 
 class Title(models.Model):
     """Модель тайтла."""
+
     name = models.CharField(max_length=256,
                             verbose_name='Название тайтла'
                             )
@@ -71,6 +74,7 @@ class Title(models.Model):
 
 class GenreTitle(models.Model):
     """Связь жанра и тайтла."""
+
     genre = models.ForeignKey(Genre,
                               on_delete=models.SET_NULL,
                               null=True,
@@ -86,19 +90,17 @@ class GenreTitle(models.Model):
 
 
 class Review(models.Model):
-    """"""
-    text = models.TextField(
-        verbose_name='текст ревью'
-    )
+    """Модель ревью (отзывы на произведения)."""
+
+    text = models.TextField(verbose_name='текст ревью')
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='reviews',
-        verbose_name='автор'
+        verbose_name='автор',
     )
     score = models.PositiveIntegerField(
         verbose_name='оценка',
-        #  validators=дописать
     )
     pub_date = models.DateTimeField(
         auto_now_add=True,
@@ -117,18 +119,19 @@ class Review(models.Model):
         ordering = ('-pub_date',)
 
     def __str__(self):
+        """Возвращает текст отзыва."""
         return self.text
 
 
 class Comment(models.Model):
-    text = models.TextField(
-        verbose_name='текст'
-    )
+    """Модель комментария."""
+
+    text = models.TextField(verbose_name='текст')
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='comments',
-        verbose_name='Aвтор'
+        verbose_name='Aвтор',
     )
     pub_date = models.DateTimeField(
         auto_now_add=True,
@@ -147,4 +150,5 @@ class Comment(models.Model):
         ordering = ('-pub_date',)
 
     def __str__(self):
+        """Возвращает текст комментария."""
         return self.text
