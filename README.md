@@ -15,9 +15,10 @@
 
 ## Технологии
 
-![Django](https://img.shields.io/badge/django-%23092E20.svg?style=for-the-badge&logo=django&logoColor=white) Django 2.2.19
+- Python 3.10
+- Django 2.2.19
+- DjangoRestFramework 3.12
 
-![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54) Python 3.10
 
 ## Запуск проекта в dev-режиме
 
@@ -51,48 +52,58 @@
     python manage.py runserver
 ```
 
-## Примеры запросов !ПЕРЕДЕЛАТЬ!
+## Документация к проекту
 
-- GET-Response: <http://127.0.0.1:8000/api/v1/posts/>
+Документация для API после установки доступна по адресу
+```
+    http://127.0.0.1/redoc/
+```
+
+## Примеры запросов
+
+- GET-Response: <http://127.0.0.1:8000/api/v1/titles/1/>
 
 Request:
 
 ```J-SON
-[
-    {
-        'id': 1,
-        'author': 'author',
-        'image':'' 'text':
-        'text', 'pub_date':
-        'pub_date',
-        'group': null
-    },
-]
-```
-
-- POST-Response: <http://127.0.0.1:8000/api/v1/posts/> :
-
-```J-SON
 {
-    "text": "string",
-    "image": "string",
-    "group": 0
+    "id": 1,
+    "name": "Побег из Шоушенка",
+    "year": 1994,
+    "description": null,
+    "genre": [
+        {
+            "name": "Драма",
+            "slug": "drama"
+        }
+    ],
+    "category": {
+        "name": "Фильм",
+        "slug": "movie"
+    },
+    "rating": 10
 }
 ```
 
+- GET-Response: <http://127.0.0.1:8000/api/v1/titles/1/reviews/1/>
+
 Request:
 
 ```J-SON
 {
-    "id": 0,
-    "author": "string",
-    "text": "string",
-    "pub_date": "2023-01-12T14:15:22Z",
-    "image": "string",
-    "group": 0
+    "id": 1,
+    "author": "bingobongo",
+    "title": 1,
+    "text": 
+        "Ставлю десять звёзд!\n...Эти голоса были чище и светлее тех,
+        о которых мечтали в этом сером, убогом месте. Как будто две птички 
+        влетели и своими голосами развеяли стены наших клеток, и на короткий
+        миг каждый человек в Шоушенке почувствовал себя свободным.",
+    "score": 10,
+    "pub_date": "2023-02-05T18:06:02.054698Z"
 }
 ```
 
 ## Авторы
 
-Студенты курса "Python-разработчик" от Яндекс-Практикума: Артём Меньшиков, Андрей Полушин, Лазаренков Евгений.
+Студенты курса "Python-разработчик" от Яндекс-Практикума: [Артём Меньшиков](https://github.com/a-menshikov), [Андрей Полушин](https://github.com/pandser), [Лазаренков Евгений](https://github.com/lazarenkov-e).
