@@ -54,7 +54,7 @@ class CategorySerializer(serializers.ModelSerializer):
         """Проверка соответствия слага категории."""
         if not re.fullmatch(r'^[-a-zA-Z0-9_]+$', value):
             raise serializers.ValidationError(
-                'Псевдоним категории не соотвествует формату'
+                'Псевдоним категории не соотвествует формату',
             )
         return value
 
@@ -70,7 +70,7 @@ class GenreSerializer(serializers.ModelSerializer):
         """Проверка соответствия слага жанра."""
         if not re.fullmatch(r'^[-a-zA-Z0-9_]+$', value):
             raise serializers.ValidationError(
-                'Псевдоним жанра не соотвествует формату'
+                'Псевдоним жанра не соотвествует формату',
             )
         return value
 
@@ -109,12 +109,12 @@ class TitleWriteSerializer(TitleSerializer):
     category = serializers.SlugRelatedField(
         slug_field='slug',
         queryset=Category.objects.all(),
-        required=False
+        required=False,
     )
     genre = serializers.SlugRelatedField(
         slug_field='slug',
         queryset=Genre.objects.all(),
-        many=True
+        many=True,
     )
 
 
