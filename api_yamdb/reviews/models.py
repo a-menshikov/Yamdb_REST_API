@@ -10,12 +10,12 @@ class Category(models.Model):
         max_length=256,
         unique=True,
         verbose_name='Название категории',
-        )
+    )
     slug = models.SlugField(
         max_length=50,
         unique=True,
         verbose_name='Псевдоним категории',
-        )
+    )
 
     class Meta:
         verbose_name = 'Категория'
@@ -32,12 +32,12 @@ class Genre(models.Model):
     name = models.CharField(
         max_length=256,
         verbose_name='Название жанра',
-        )
+    )
     slug = models.SlugField(
         max_length=50,
         unique=True,
         verbose_name='Псевдоним жанра',
-        )
+    )
 
     class Meta:
         verbose_name = 'Жанр'
@@ -54,27 +54,27 @@ class Title(models.Model):
     name = models.CharField(
         max_length=256,
         verbose_name='Название тайтла',
-        )
+    )
     year = models.PositiveIntegerField(
         null=True,
         verbose_name='Год выпуска',
-        )
+    )
     description = models.TextField(
         verbose_name='Описание тайтла',
         null=True,
         blank=True,
-        )
+    )
     genre = models.ManyToManyField(
         Genre,
         through='GenreTitle',
-        )
+    )
     category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
         verbose_name='Категория тайтла',
         null=True,
         blank=True,
-        )
+    )
 
     class Meta:
         verbose_name = 'Произведение'
@@ -94,12 +94,12 @@ class GenreTitle(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         verbose_name='Жанр',
-        )
+    )
     title = models.ForeignKey(
         Title,
         on_delete=models.CASCADE,
         verbose_name='Тайтл',
-        )
+    )
 
     def __str__(self):
         return f'{self.title} {self.genre}'
@@ -133,12 +133,12 @@ class Review(models.Model):
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
         ordering = ('-pub_date',)
-        constraints = [
+        constraints = (
             models.UniqueConstraint(
-                fields=['author', 'title'],
+                fields=('author', 'title'),
                 name='unique_review',
             ),
-        ]
+        )
 
     def __str__(self):
         """Возвращает текст отзыва."""
