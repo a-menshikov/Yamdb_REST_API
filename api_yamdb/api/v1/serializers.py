@@ -141,7 +141,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = '__all__'
+        fields = ('id', 'text', 'author', 'score', 'pub_date', 'title')
 
     def validate(self, data):
         """Запрещает пользователям оставлять повторные отзывы."""
