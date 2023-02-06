@@ -1,3 +1,15 @@
+from django.db.models import Avg
+from django_filters.rest_framework import DjangoFilterBackend
+from django.shortcuts import get_object_or_404
+from rest_framework import filters, mixins, status, viewsets
+from rest_framework.permissions import (SAFE_METHODS, AllowAny,
+                                        IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
+from rest_framework_simplejwt.views import TokenObtainPairView
+
 from api.v1.filters import TitleFilter
 from api.v1.permissions import (IsAdminOrReadOnly, IsAdminUser,
                                 IsAuthorOrModerAdminPermission)
@@ -7,18 +19,7 @@ from api.v1.serializers import (CategorySerializer, CommentSerializer,
                                 TitleWriteSerializer, UserSerializer,
                                 UsersMeSerializer,
                                 YamdbTokenObtainPairSerializer)
-from django.core.mail import send_mail
-from django.db.models import Avg
-from django.shortcuts import get_object_or_404
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, mixins, status, viewsets
-from rest_framework.permissions import (SAFE_METHODS, AllowAny,
-                                        IsAuthenticated,
-                                        IsAuthenticatedOrReadOnly)
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet
-from rest_framework_simplejwt.views import TokenObtainPairView
+from api.v1.utils import send_confirmation_code
 from reviews.models import Category, Comment, Genre, Review, Title
 from user.models import User
 
@@ -53,6 +54,7 @@ class UsersMeView(APIView):
 
 
 class YamdbTokenObtainPairView(TokenObtainPairView):
+    """Вью для получения токена"""
     serializer_class = YamdbTokenObtainPairSerializer
 
 
@@ -62,14 +64,13 @@ class SignupView(APIView):
 
     def post(self, request):
         serializer = SignupSerializer(data=request.data)
+        if User.objects.filter(username=request.data.get('username'),
+                               email=request.data.get('email')).exists():
+            send_confirmation_code(request)
+            return Response(request.data, status=status.HTTP_200_OK)
         if serializer.is_valid():
-            send_mail(
-                'данные для получеия токена',
-                'текст письма',
-                'token@yamdb.ru',
-                [request.data.get('email')],
-            )
             serializer.save()
+            send_confirmation_code(request)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -86,7 +87,6 @@ class CreateListDestroyViewSet(mixins.CreateModelMixin,
 
 class CategoryViewSet(CreateListDestroyViewSet):
     """Вьюсет для модели Category."""
-
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = (IsAdminOrReadOnly,)
@@ -94,7 +94,6 @@ class CategoryViewSet(CreateListDestroyViewSet):
 
 class GenreViewSet(CreateListDestroyViewSet):
     """Вьюсет для модели Genre."""
-
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     permission_classes = (IsAdminOrReadOnly,)
@@ -102,7 +101,6 @@ class GenreViewSet(CreateListDestroyViewSet):
 
 class TitleViewSet(viewsets.ModelViewSet):
     """Вьюсет для модели Title."""
-
     queryset = Title.objects.annotate(
         rating=Avg('reviews__score')
     ).order_by('name')
@@ -118,10 +116,10 @@ class TitleViewSet(viewsets.ModelViewSet):
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
-    permission_classes = [
+    permission_classes = (
         IsAuthenticatedOrReadOnly,
         IsAuthorOrModerAdminPermission,
-    ]
+    )
 
     def perform_create(self, serializer):
         title_id = self.kwargs.get('title_id')
@@ -136,10 +134,10 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    permission_classes = [
+    permission_classes = (
         IsAuthenticatedOrReadOnly,
         IsAuthorOrModerAdminPermission,
-    ]
+    )
 
     def perform_create(self, serializer):
         title_id = self.kwargs.get('title_id')

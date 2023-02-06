@@ -1,48 +1,41 @@
 import re
 
 from django.utils import timezone
-
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.shortcuts import get_object_or_404
-
 from rest_framework import serializers
-from reviews.models import Category, Comment, Genre, Review, Title
+from rest_framework_simplejwt.tokens import AccessToken
 
+from reviews.models import Category, Comment, Genre, Review, Title
 from user.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
     """Сериализатор модели User."""
-
     class Meta:
         fields = ('username', 'email', 'first_name', 'last_name',
                   'bio', 'role')
         model = User
 
 
-class UsersMeSerializer(serializers.ModelSerializer):
+class UsersMeSerializer(UserSerializer):
     """Сериализатор для эндпоинта users/me/."""
-
-    class Meta:
-        fields = ('username', 'email', 'first_name', 'last_name',
-                  'bio')
-        model = User
+    role = serializers.CharField(read_only=True)
 
 
-class YamdbTokenObtainPairSerializer(TokenObtainPairSerializer):
-    confirmation_code = serializers.CharField(required=True)
+class YamdbTokenObtainPairSerializer(serializers.Serializer):
+    """Сериализатор получения токена."""
+    username = serializers.CharField(max_length=150)
+    confirmation_code = serializers.CharField(max_length=20)
 
-    def validate(self, attrs):
-        data = super().validate(attrs)
-        return {'access': data['access']}
-
-    def validate_username(self, value):
-        return get_object_or_404(User, username=value)
+    def validate(self, data):
+        user = get_object_or_404(User, username=data.get('username'))
+        if user.confirmation_code != data.get('confirmation_code'):
+            raise serializers.ValidationError('Не верный confirmation_code')
+        return {'access': str(AccessToken.for_user(user))}
 
 
 class SignupSerializer(serializers.ModelSerializer):
     """Сериализатор для регистрации пользователей."""
-
     def validate_username(self, value):
         if value == 'me':
             raise serializers.ValidationError(
@@ -57,7 +50,6 @@ class SignupSerializer(serializers.ModelSerializer):
 
 class CategorySerializer(serializers.ModelSerializer):
     """Сериализатор модели Category."""
-
     def validate_slug(self, value):
         """Проверка соответствия слага категории."""
         if not re.fullmatch(r'^[-a-zA-Z0-9_]+$', value):
@@ -74,7 +66,6 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class GenreSerializer(serializers.ModelSerializer):
     """Сериализатор модели Genre."""
-
     def validate_slug(self, value):
         """Проверка соответствия слага жанра."""
         if not re.fullmatch(r'^[-a-zA-Z0-9_]+$', value):
@@ -129,7 +120,6 @@ class TitleWriteSerializer(TitleSerializer):
 
 class ReviewSerializer(serializers.ModelSerializer):
     """Сериализатор для модели Review."""
-
     author = serializers.StringRelatedField(read_only=True)
 
     class Meta:
