@@ -36,8 +36,8 @@ class Command(BaseCommand):
             if row.get('genre'):
                 row['genre'] = Genre.objects.get(pk=row['genre'])
         except Exception as error:
-            print(f"Ошибка в строке {row.get('id')}.\n"
-                  f"Текст - {error}")
+            print(f'Ошибка в строке {row.get("id")}.\n'
+                  f'Текст - {error}')
         return row
 
     def handle(self, *args, **options):
@@ -56,8 +56,8 @@ class Command(BaseCommand):
                         model.objects.get_or_create(**row)
                         successful += 1
                     except Exception as error:
-                        print(f"Ошибка в строке {row.get('id')}.\n"
-                              f"Текст - {error}")
+                        print(f'Ошибка в строке {row.get("id")}.\n'
+                              f'Текст - {error}')
             print(f'Наполнение модели {model.__name__} завершено. '
-                  f'Строк: {rows}. Успешно: {successful}.'
+                  f'Строк: {rows}. Успешно: {successful}.',
                   )
