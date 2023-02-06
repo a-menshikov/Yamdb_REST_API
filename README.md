@@ -143,7 +143,7 @@ Request:
 система подтверждения через e-mail
 ```
 
-[Лазаренков Евгений](https://github.com/lazarenkov-e).
+[Лазаренков Евгений](https://github.com/lazarenkov-e)
 ```
 модели, view и эндпойнты для:
 отзывов,
