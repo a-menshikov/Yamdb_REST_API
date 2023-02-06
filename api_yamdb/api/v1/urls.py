@@ -20,7 +20,6 @@ router.register(
     basename='comment',
 )
 
-
 urlpatterns = [
     path('auth/token/', YamdbTokenObtainPairView.as_view(),
          name='create_token'),
