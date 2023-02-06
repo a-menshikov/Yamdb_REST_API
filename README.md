@@ -16,8 +16,8 @@
 ## Технологии
 
 - Python 3.10
-- Django 2.2.19
-- DjangoRestFramework 3.12
+- Django 3.2
+- Djangorestframework 3.12.4
 
 
 ## Запуск проекта в dev-режиме
@@ -30,14 +30,26 @@
 
 2. Cоздать виртуальное окружение:
 
+windows
 ```bash
     python -m venv venv
 ```
 
+linux
+```bash
+    python3 -m venv venv
+```
+
 3. Активируйте виртуальное окружение
 
+windows
 ```bash
     source venv/Scripts/activate
+```
+
+linux
+```bash
+    source venv/bin/activate
 ```
 
 4. Установите зависимости из файла requirements.txt
@@ -48,8 +60,14 @@
 
 5. В папке с файлом manage.py выполните команду:
 
+windows
 ```bash
     python manage.py runserver
+```
+
+linux
+```bash
+    python3 manage.py runserver
 ```
 
 ## Документация к проекту
@@ -106,4 +124,29 @@ Request:
 
 ## Авторы
 
-Студенты курса "Python-разработчик" от Яндекс-Практикума: [Артём Меньшиков](https://github.com/a-menshikov), [Андрей Полушин](https://github.com/pandser), [Лазаренков Евгений](https://github.com/lazarenkov-e).
+Студенты курса "Python-разработчик" от Яндекс-Практикума:
+
+[Артём Меньшиков](https://github.com/a-menshikov)
+```
+модели, view и эндпойнты для:
+произведений,
+категорий,
+жанров;
+импорт данных из csv файлов
+```
+
+[Андрей Полушин](https://github.com/pandser)
+```
+система регистрации и аутентификации,
+права доступа,
+работа с токеном,
+система подтверждения через e-mail
+```
+
+[Лазаренков Евгений](https://github.com/lazarenkov-e).
+```
+модели, view и эндпойнты для:
+отзывов,
+комментариев,
+рейтинга произведений
+```

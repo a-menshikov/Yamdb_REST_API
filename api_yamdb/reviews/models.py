@@ -113,20 +113,20 @@ class Review(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='reviews',
-        verbose_name='автор',
+        verbose_name='Автор',
     )
     score = models.PositiveIntegerField(
-        verbose_name='оценка',
+        verbose_name='Оценка',
     )
     pub_date = models.DateTimeField(
         auto_now_add=True,
-        verbose_name='дата публикации',
+        verbose_name='Дата публикации',
     )
     title = models.ForeignKey(
         Title,
         on_delete=models.CASCADE,
         related_name='reviews',
-        verbose_name='название произведения',
+        verbose_name='Название произведения',
     )
 
     class Meta:
@@ -136,8 +136,8 @@ class Review(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['author', 'title'],
-                name='unique_review'
-            )
+                name='unique_review',
+            ),
         ]
 
     def __str__(self):
@@ -163,7 +163,7 @@ class Comment(models.Model):
         Review,
         on_delete=models.CASCADE,
         related_name='comments',
-        verbose_name='oтзыв',
+        verbose_name='Отзыв',
     )
 
     class Meta:

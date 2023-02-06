@@ -1,6 +1,7 @@
 import csv
 
 from django.core.management.base import BaseCommand
+
 from reviews.models import (Category, Comment, Genre, GenreTitle, Review,
                             Title, User)
 
@@ -20,6 +21,7 @@ class Command(BaseCommand):
     Вызов python3 manage.py importcsv
     из терминала в соответствующей папке
     """
+
     help = 'Импорт csv файлов в таблицы базы'
 
     def _create_correct_row_fields(self, row):

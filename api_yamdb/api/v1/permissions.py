@@ -5,6 +5,7 @@ from user.models import ADMIN, MODERATOR
 
 class IsAdminOrReadOnly(permissions.BasePermission):
     """Даёт доступ неадмину только к GET/OPTIONS/HEAD."""
+
     message = 'Данный запрос недоступен для вас.'
 
     def has_permission(self, request, view):
@@ -25,12 +26,17 @@ class IsAdminOrReadOnly(permissions.BasePermission):
 
 class IsAdminUser(permissions.BasePermission):
     """Доступ только для пльзователей с ролью администратора."""
+
+    message = 'Данный запрос недоступен для вас.'
+
     def has_permission(self, request, view):
         return bool(request.user and (request.user.role == ADMIN
                                       or request.user.is_superuser))
 
 
 class IsAuthorOrModerAdminPermission(permissions.BasePermission):
+    """Даёт доступ неадмину/немодеру/неавтору только к GET/OPTIONS/HEAD."""
+
     message = 'Данный запрос недоступен для вас.'
 
     def has_object_permission(self, request, view, obj):
