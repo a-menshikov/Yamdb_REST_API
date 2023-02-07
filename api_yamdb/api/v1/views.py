@@ -62,10 +62,9 @@ class UsersMeView(APIView):
         """Метод PATCH."""
         me = get_object_or_404(User, username=request.user.username)
         serializer = UsersMeSerializer(me, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class YamdbTokenObtainPairView(TokenObtainPairView):
@@ -86,11 +85,10 @@ class SignupView(APIView):
                                email=request.data.get('email')).exists():
             send_confirmation_code(request)
             return Response(request.data, status=status.HTTP_200_OK)
-        if serializer.is_valid():
-            serializer.save()
-            send_confirmation_code(request)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        send_confirmation_code(request)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class CreateListDestroyViewSet(mixins.CreateModelMixin,
@@ -109,7 +107,7 @@ class CategoryViewSet(CreateListDestroyViewSet):
 
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = (IsAdminOrReadOnly,)
+    permission_classes = (IsAuthenticatedOrReadOnly, IsAdminOrReadOnly)
 
 
 class GenreViewSet(CreateListDestroyViewSet):
@@ -117,7 +115,7 @@ class GenreViewSet(CreateListDestroyViewSet):
 
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    permission_classes = (IsAdminOrReadOnly,)
+    permission_classes = (IsAuthenticatedOrReadOnly, IsAdminOrReadOnly)
 
 
 class TitleViewSet(viewsets.ModelViewSet):
@@ -128,7 +126,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     ).order_by('name')
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
-    permission_classes = (IsAdminOrReadOnly,)
+    permission_classes = (IsAuthenticatedOrReadOnly, IsAdminOrReadOnly)
 
     def get_serializer_class(self):
         if self.request.method in SAFE_METHODS:
