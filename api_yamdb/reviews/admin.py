@@ -28,8 +28,13 @@ class GenreAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
+class GenreTitleInline(admin.TabularInline):
+    model = GenreTitle
+
+
 @admin.register(Title)
 class TitleAdmin(admin.ModelAdmin):
+    inlines = (GenreTitleInline,)
     list_display = (
         'pk',
         'name',
