@@ -1,9 +1,8 @@
 # Проект YaMDb
-*февраль 2023*
 
 Проект YaMDb собирает отзывы пользователей на произведения. Сами произведения в YaMDb не хранятся, здесь нельзя посмотреть фильм или послушать музыку.
-Произведения делятся на категории, такие как «Книги», «Фильмы», «Музыка». Список категорий может быть расширен. 
-Произведению может быть присвоен жанр из списка предустановленных (например, «Сказка», «Рок» или «Артхаус»). 
+Произведения делятся на категории, такие как «Книги», «Фильмы», «Музыка». Список категорий может быть расширен.
+Произведению может быть присвоен жанр из списка предустановленных (например, «Сказка», «Рок» или «Артхаус»).
 Добавлять произведения, категории и жанры может только администратор.
 
 ## Пользовательские роли и права доступа
@@ -20,61 +19,67 @@
 - Django 3.2
 - Djangorestframework 3.12.4
 
-
 ## Запуск проекта в dev-режиме
 
 1. Клонировать репозиторий и перейти в него в командной строке:
 
-```bash
-    git clone <ссылка с git-hub>
-```
+    ```bash
+        git clone <ссылка с git-hub>
+    ```
 
 2. Cоздать виртуальное окружение:
 
-windows
-```bash
-    python -m venv venv
-```
+    windows
 
-linux
-```bash
-    python3 -m venv venv
-```
+    ```bash
+        python -m venv venv
+    ```
+
+    linux
+
+    ```bash
+        python3 -m venv venv
+    ```
 
 3. Активируйте виртуальное окружение
 
-windows
-```bash
-    source venv/Scripts/activate
-```
+    windows
 
-linux
-```bash
-    source venv/bin/activate
-```
+    ```bash
+        source venv/Scripts/activate
+    ```
+
+    linux
+
+    ```bash
+        source venv/bin/activate
+    ```
 
 4. Установите зависимости из файла requirements.txt
 
-```bash
-    pip install -r requirements.txt
-```
+    ```bash
+        pip install -r requirements.txt
+    ```
 
 5. В папке с файлом manage.py выполните команду:
 
-windows
-```bash
-    python manage.py runserver
-```
+    windows
 
-linux
-```bash
-    python3 manage.py runserver
-```
+    ```bash
+        python manage.py runserver
+    ```
+
+    linux
+
+    ```bash
+        python3 manage.py runserver
+    ```
 
 ## Документация к проекту
 
 Документация для API после установки доступна по адресу
-```
+
+```url
     http://127.0.0.1/redoc/
 ```
 
@@ -128,7 +133,8 @@ Request:
 Студенты курса "Python-разработчик" от Яндекс-Практикума:
 
 [Артём Меньшиков](https://github.com/a-menshikov)
-```
+
+```text
 модели, view и эндпойнты для:
 произведений,
 категорий,
@@ -137,7 +143,8 @@ Request:
 ```
 
 [Андрей Полушин](https://github.com/pandser)
-```
+
+```text
 система регистрации и аутентификации,
 права доступа,
 работа с токеном,
@@ -145,7 +152,8 @@ Request:
 ```
 
 [Лазаренков Евгений](https://github.com/lazarenkov-e)
-```
+
+```text
 модели, view и эндпойнты для:
 отзывов,
 комментариев,

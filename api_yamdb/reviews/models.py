@@ -1,5 +1,6 @@
 from django.db import models
 
+from reviews.validators import validate_year
 from user.models import User
 
 
@@ -23,7 +24,7 @@ class Category(models.Model):
 
     def __str__(self):
         """Возвращает слаг категории."""
-        return f'{self.slug}'
+        return self.slug
 
 
 class Genre(models.Model):
@@ -45,7 +46,7 @@ class Genre(models.Model):
 
     def __str__(self):
         """Возвращает слаг жанра."""
-        return f'{self.slug}'
+        return self.slug
 
 
 class Title(models.Model):
@@ -58,6 +59,9 @@ class Title(models.Model):
     year = models.PositiveIntegerField(
         null=True,
         verbose_name='Год выпуска',
+        validators=(
+            validate_year,
+        ),
     )
     description = models.TextField(
         verbose_name='Описание тайтла',
@@ -83,7 +87,7 @@ class Title(models.Model):
 
     def __str__(self):
         """Возвращает название тайтла."""
-        return f'{self.name}'
+        return self.name
 
 
 class GenreTitle(models.Model):
@@ -100,6 +104,14 @@ class GenreTitle(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Тайтл',
     )
+
+    class Meta:
+        constraints = (
+            models.UniqueConstraint(
+                fields=('genre', 'title'),
+                name='unique_genre_title',
+            ),
+        )
 
     def __str__(self):
         return f'{self.title} {self.genre}'
