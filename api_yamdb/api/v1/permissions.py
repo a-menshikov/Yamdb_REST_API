@@ -1,7 +1,5 @@
 from rest_framework import permissions
 
-from user.models import ADMIN, MODERATOR
-
 
 class IsAdminOrReadOnly(permissions.BasePermission):
     """Даёт доступ неадмину только к GET/OPTIONS/HEAD."""
@@ -21,8 +19,7 @@ class IsAdminUser(permissions.BasePermission):
     message = 'Данный запрос недоступен для вас.'
 
     def has_permission(self, request, view):
-        return bool(request.user and (request.user.role == ADMIN
-                                      or request.user.is_superuser))
+        return request.user.is_admin
 
 
 class IsAuthorOrModerAdminPermission(permissions.BasePermission):
@@ -35,10 +32,8 @@ class IsAuthorOrModerAdminPermission(permissions.BasePermission):
             request.method in permissions.SAFE_METHODS
             or request.user.is_authenticated
             and (
-                request.user.is_superuser
-                or request.user.is_staff
-                or request.user.role == ADMIN
-                or request.user.role == MODERATOR
+                request.user.is_admin
+                or request.user.is_moderator
                 or request.user == obj.author
             )
         )

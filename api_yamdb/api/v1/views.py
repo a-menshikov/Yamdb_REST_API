@@ -62,10 +62,9 @@ class UsersMeView(APIView):
         """Метод PATCH."""
         me = get_object_or_404(User, username=request.user.username)
         serializer = UsersMeSerializer(me, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class YamdbTokenObtainPairView(TokenObtainPairView):
@@ -86,11 +85,10 @@ class SignupView(APIView):
                                email=request.data.get('email')).exists():
             send_confirmation_code(request)
             return Response(request.data, status=status.HTTP_200_OK)
-        if serializer.is_valid():
-            serializer.save()
-            send_confirmation_code(request)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        send_confirmation_code(request)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class CreateListDestroyViewSet(mixins.CreateModelMixin,

@@ -1,14 +1,11 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-ADMIN = 'admin'
-MODERATOR = 'moderator'
-USER = 'user'
-ROLES = [
-    (ADMIN, ADMIN),
-    (MODERATOR, MODERATOR),
-    (USER, USER),
-]
+
+class UserRole(models.TextChoices):
+    ADMIN = 'admin'
+    MODERATOR = 'moderator'
+    USER = 'user'
 
 
 class User(AbstractUser):
@@ -18,8 +15,8 @@ class User(AbstractUser):
     )
     role = models.CharField(
         max_length=9,
-        choices=ROLES,
-        default='user',
+        choices=UserRole.choices,
+        default=UserRole.USER,
         verbose_name='Роль',
     )
     email = models.EmailField(
@@ -36,3 +33,15 @@ class User(AbstractUser):
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
+
+    @property
+    def is_admin(self):
+        return (
+                self.role == UserRole.ADMIN
+                or self.is_staff
+                or self.is_superuser
+        )
+
+    @property
+    def is_moderator(self):
+        return self.role == UserRole.MODERATOR
