@@ -12,8 +12,6 @@ from user.models import User, UserRole
 class UserSerializer(serializers.ModelSerializer):
     """Сериализатор модели User."""
 
-    role = serializers.ChoiceField(default=UserRole.USER, choices=UserRole)
-
     class Meta:
         fields = (
             'username',
