@@ -28,6 +28,12 @@ class GenreAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
+class GenreInline(admin.TabularInline):
+    """Инлайн для работы с жанрами произведения в админке."""
+    model = GenreTitle
+    extra = 2
+
+
 @admin.register(Title)
 class TitleAdmin(admin.ModelAdmin):
     list_display = (
@@ -37,6 +43,9 @@ class TitleAdmin(admin.ModelAdmin):
         'description',
         'category',
         'get_rating',
+    )
+    inlines = (
+        GenreInline,
     )
     empty_value_display = 'значение отсутствует'
     list_filter = ('name',)
