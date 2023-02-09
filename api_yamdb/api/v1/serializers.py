@@ -6,13 +6,11 @@ from rest_framework import serializers
 from rest_framework_simplejwt.tokens import AccessToken
 
 from reviews.models import Category, Comment, Genre, Review, Title
-from user.models import User, UserRole
+from user.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
     """Сериализатор модели User."""
-
-    role = serializers.ChoiceField(default=UserRole.USER, choices=UserRole)
 
     class Meta:
         fields = (
